@@ -3,7 +3,6 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Utils;
-using JailBreak.JailItems;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -18,7 +17,6 @@ public class Player
     public bool isBlueTeam;
     public bool isRedTeam;
     public bool isFroze;
-    public List<JailItem> JailItems { get; } = new();
     public static List<Player> Players { get; } = new();
     public static List<Player> PlayersBlueTeam { get; } = new();
     public static List<Player> PlayersRedTeam { get; } = new();

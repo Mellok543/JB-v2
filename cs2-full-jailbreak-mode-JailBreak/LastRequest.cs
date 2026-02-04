@@ -440,29 +440,6 @@ internal class LastRequest
         {
             string message = ChatColors.Green + "[LastRequest] " + ChatColors.Default + "Pobednik LR-a je : " + JailBreak.LRPlayerCT.PlayerName;
             Server.PrintToChatAll($"\u200B{message}");
-
-            if (Utilities.GetPlayers().Count >= JailBreak.jailbreak.Config.ShopCoins.minPlayers)
-            {
-                if (JailBreak.jailbreak.Config.ShopCoins.toggleTWinLR)
-                {
-                    if (Player.playerHasFlag(JailBreak.LRPlayer, "@css/reservation") && JailBreak.jailbreak.Config.ShopCoins.toggleTWinLRVip)
-                    {
-                        ulong steamid = JailBreak.LRPlayer.SteamID;
-                        int amount = JailBreak.jailbreak.Config.ShopCoins.amountTWinLRVip;
-                        Task.Run(() => DataBase.Database.AddCredits(steamid, amount));
-                        message = ChatColors.Green + "[JailShop] " + ChatColors.Default + "Pobedio si LR i dobio si " + amount + " kredita";
-                        player.PrintToChat($"\u200B{message}");
-                    }
-                    else
-                    {
-                        ulong steamid = JailBreak.LRPlayer.SteamID;
-                        int amount = JailBreak.jailbreak.Config.ShopCoins.amountTWinLR;
-                        Task.Run(() => DataBase.Database.AddCredits(steamid, amount));
-                        message = ChatColors.Green + "[JailShop] " + ChatColors.Default + "Pobedio si LR i dobio si " + amount + " kredita";
-                        player.PrintToChat($"\u200B{message}");
-                    }
-                }
-            }
         }
         return;
     }

@@ -35,7 +35,7 @@ namespace JailBreak.EventDays
             JailBreak.jailbreak.AddTimer(120.0f, () =>
             {
                 if (!EventDay.dayType.Equals("FreeDay")) return;
-                string message = ChatColors.Green + "[JailShop] " + ChatColors.Default + "FreeDay svima je gotov, zatvorenici vratite se u kavez!";
+                string message = ChatColors.Green + "[JailBreak] " + ChatColors.Default + "FreeDay svima je gotov, zatvorenici vratite se u kavez!";
                 Server.PrintToChatAll($"\u200B{message}");
                 foreach (var player in Utilities.GetPlayers())
                 {

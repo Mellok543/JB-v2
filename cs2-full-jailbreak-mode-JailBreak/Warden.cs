@@ -368,7 +368,6 @@ public partial class JailBreak
     [GameEventHandler(mode: HookMode.Pre)]
     public HookResult OnEventRoundEnd(EventRoundEnd @event, GameEventInfo info)
     {
-        JailShop.ResetPlayersRoundEnd();
         Player.Players.Clear();
         isLr = false;
         if(EventDay.isEventDay)
@@ -400,12 +399,7 @@ public partial class JailBreak
             item.PlayerPawn.Value?.ItemServices?.As<CCSPlayer_ItemServices>().RemoveWeapons();
             item.GiveNamedItem("weapon_knife");
 
-        }    
-        JailShop.timeOk = true;
-        AddTimer(60.0f, () =>
-        {
-            JailShop.timeOk = false;
-        });
+        }
 
 
         return HookResult.Continue;

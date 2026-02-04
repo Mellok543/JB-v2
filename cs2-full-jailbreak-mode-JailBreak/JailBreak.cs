@@ -22,15 +22,12 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Serialization;
 using System.Drawing;
 using CounterStrikeSharp.API.Core.Capabilities;
-using Dapper;
 using MenuManager;
 using System;
 using CounterStrikeSharp.API.Core.Plugin.Host;
 using McMaster.NETCore.Plugins;
 using System.Net.Http.Headers;
 using CounterStrikeSharp.API.Core.Translations;
-using JailBreak.DataBase;
-using JailBreak.JailItems;
 namespace JailBreak;
 
 public partial class JailBreak : BasePlugin, IPluginConfig<Config.Config>
@@ -84,8 +81,6 @@ public partial class JailBreak : BasePlugin, IPluginConfig<Config.Config>
             RegisterCommandsWarden();
             Server.ExecuteCommand("mp_ct_default_melee weapon_knife");
             Server.ExecuteCommand("mp_t_default_melee weapon_knife");
-            JailShop.IdleCredits();
-
             AddCommand("css_lr", "Lr Menu", (player, info) =>
             {
             });
@@ -93,18 +88,8 @@ public partial class JailBreak : BasePlugin, IPluginConfig<Config.Config>
     }
     public async void OnConfigParsed(Config.Config config)
     {
-        await Database.CreateDatabaseAsync(config);
         config.Tag = StringExtensions.ReplaceColorTags(config.Tag);
         Config = config;
-    }
-    [ConsoleCommand("css_shop")]
-    [CommandHelper(whoCanExecute: CommandUsage.CLIENT_ONLY)]
-    public void Command_SHOP(CCSPlayerController? player, CommandInfo command)
-    {
-        if (player == null) return;
-        if (_api == null) return;
-
-        JailShop.OpenShop(player);
     }
     [ConsoleCommand("css_lr")]
     [CommandHelper(whoCanExecute: CommandUsage.CLIENT_ONLY)]
@@ -253,11 +238,6 @@ public partial class JailBreak : BasePlugin, IPluginConfig<Config.Config>
         if (@event.Userid == null || !@event.Userid.IsValid || @event.Userid.AuthorizedSteamID == null) 
             return HookResult.Continue;
 
-        ulong steamid = @event.Userid.SteamID;
-        string playername = @event.Userid.PlayerName;
-        CCSPlayerController player = @event.Userid;
-        Task.Run(() => Database.SetupPlayer(steamid, playername, 0));
-        
         return HookResult.Continue;
     }
     [ConsoleCommand("css_admin")]
@@ -295,72 +275,6 @@ public partial class JailBreak : BasePlugin, IPluginConfig<Config.Config>
                     Player.RemoveWarden(item);
                 }
             }
-        });
-        menu.AddMenuOption("CT Ban", (player, action) =>
-        {
-            var menu2 = JailBreak._api.NewMenuForcetype("CT Ban", MenuType.ButtonMenu);
-            menu2.AddMenuOption("Ban a player", (player, action) =>
-            {
-                var menu1 = JailBreak._api.NewMenuForcetype("Select a player", MenuType.ButtonMenu);
-                menu1.PostSelectAction = PostSelectAction.Close;
-                foreach (var item in Utilities.GetPlayers())
-                {
-                    if (!Player.IsValidPlayer(item)) continue;
-
-                    menu1.AddMenuOption(item.PlayerName, (player, action) =>
-                    {
-                        Server.ExecuteCommand("css_ctban " + item.SteamID + " 1440");
-                    });
-                }
-                menu1.Open(player);
-            });
-            menu2.AddMenuOption("Unban a player", (player, action) =>
-            {
-                var menu1 = JailBreak._api.NewMenuForcetype("Select a player", MenuType.ButtonMenu);
-                menu1.PostSelectAction = PostSelectAction.Close;
-                foreach (var item in Utilities.GetPlayers())
-                {
-                    if (!Player.IsValidPlayer(item)) continue;
-
-                    menu1.AddMenuOption(item.PlayerName, (player, action) =>
-                    {
-                        Server.ExecuteCommand("css_unctban " + item.SteamID);
-                    });
-                }
-                menu1.Open(player);
-            });
-            menu2.AddMenuOption("Check if banned", (player, action) =>
-            {
-                var menu1 = JailBreak._api.NewMenuForcetype("Select a player", MenuType.ButtonMenu);
-                menu1.PostSelectAction = PostSelectAction.Close;
-                foreach (var item in Utilities.GetPlayers())
-                {
-                    if (!Player.IsValidPlayer(item)) continue;
-
-                    menu1.AddMenuOption(item.PlayerName, (player, action) =>
-                    {
-                        Server.ExecuteCommand("css_isctbanned " + item.SteamID);
-                    });
-                }
-                menu1.Open(player);
-            });
-            menu2.AddMenuOption("Session ban", (player, action) =>
-            {
-                var menu1 = JailBreak._api.NewMenuForcetype("Select a player", MenuType.ButtonMenu);
-                menu1.PostSelectAction = PostSelectAction.Close;
-                foreach (var item in Utilities.GetPlayers())
-                {
-                    if (!Player.IsValidPlayer(item)) continue;
-
-                    menu1.AddMenuOption(item.PlayerName, (player, action) =>
-                    {
-                        Server.ExecuteCommand("css_sessionban " + item.SteamID);
-                    });
-                }
-                menu1.Open(player);
-            });
-
-            menu2.Open(player);
         });
 
         menu.AddMenuOption("Give Freeday", (player, action) =>
@@ -498,13 +412,6 @@ public partial class JailBreak : BasePlugin, IPluginConfig<Config.Config>
 
         return HookResult.Handled;
     }
-    [ConsoleCommand("css_gift")]
-    [CommandHelper(minArgs: 2, usage: "<userid> <amount>")]
-    public void Command_GiftCredits(CCSPlayerController? player, CommandInfo command)
-    {
-        JailShop.GiftCredits(player, command);
-    }
-
         private void PrintInfo()
     {
         Server.PrintToConsole(" ");

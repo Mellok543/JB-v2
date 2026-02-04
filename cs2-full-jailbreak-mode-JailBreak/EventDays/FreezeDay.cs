@@ -116,7 +116,6 @@ namespace JailBreak.EventDays
                         {
                             timer.Kill();
                         }
-                        JailShop.IdleCredits();
                     }
                 }
             }
